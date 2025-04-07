@@ -7,6 +7,7 @@ from aiogram.client.default import DefaultBotProperties
 
 import asyncio
 from aiohttp import web 
+import os
 
 # 🔐 Впиши сюда свой секретный токен
 TOKEN = "7613268698:AAGLKzPJMPmv9sZQvTv-Stf9CmXRh2ZdUmg"
