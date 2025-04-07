@@ -3,6 +3,7 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.filters import CommandStart
+from aiogram.client.default import DefaultBotProperties
 
 import asyncio
 
@@ -10,7 +11,8 @@ import asyncio
 TOKEN = "7613268698:AAGLKzPJMPmv9sZQvTv-Stf9CmXRh2ZdUmg"
 
 # 🧠 Инициализация бота и диспетчера
-bot = Bot(token=TOKEN, parse_mode=ParseMode.HTML)
+default_properties = DefaultBotProperties(parse_mode=ParseMode.HTML)  # Настройка parse_mode
+bot = Bot(token=TOKEN, default=default_properties)  # Передаем default_properties
 dp = Dispatcher(storage=MemoryStorage())
 
 
