@@ -145,29 +145,26 @@ async def cmd_start(message: Message):
 #         user_stats[user_id] += 1
 
 #     await message.answer(TEXT_SHYMBAY_NOKIS)
-@dp.callback_query(F.data == "nukis_shymbay")
+@dp.callback_query(F.data == "nukus_shymbay")
 async def handle_nukus_shymbay(callback: CallbackQuery):
     user_id = callback.from_user.id
 
-    # Увеличиваем счетчик взаимодействий пользователя
-    if user_id not in user_stats:
-        user_stats[user_id] = 1
-    else:
-        user_stats[user_id] += 1
+    # Обновляем статистику
+    user_stats[user_id] = user_stats.get(user_id, 0) + 1
 
-    await callback.answer(TEXT_NOKIS_SHYMBAY)
+    # Отправляем сообщение с маршрутом
+    await callback.message.answer(TEXT_NOKIS_SHYMBAY)
+    await callback.answer()  # Убираем "часики"
 
 @dp.callback_query(F.data == "shymbay_nukis")
 async def handle_shymbay_nukus(callback: CallbackQuery):
     user_id = callback.from_user.id
 
-    # Увеличиваем счетчик взаимодействий пользователя
-    if user_id not in user_stats:
-        user_stats[user_id] = 1
-    else:
-        user_stats[user_id] += 1
+    user_stats[user_id] = user_stats.get(user_id, 0) + 1
 
-    await callback.answer(TEXT_SHYMBAY_NOKIS)
+    await callback.message.answer(TEXT_SHYMBAY_NOKIS)
+    await callback.answer()
+
 
 
 # 📊 Команда /stats для вывода статистики
