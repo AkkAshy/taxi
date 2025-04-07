@@ -4,6 +4,8 @@ from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.filters import CommandStart
 from aiogram.client.default import DefaultBotProperties
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.types import CallbackQuery
 
 import asyncio
 from aiohttp import web 
@@ -84,14 +86,23 @@ TEXT_SHYMBAY_NOKIS = """
 user_stats = {}
 
 # 🪑 Обычные кнопки маршрутов
+# def get_main_keyboard():
+#     return ReplyKeyboardMarkup(
+#         keyboard=[
+#             [KeyboardButton(text="Нокис-Шымбай")],
+#             [KeyboardButton(text="Шымбай-Нукус")]
+#         ],
+#         resize_keyboard=True,  # подгоняет размер
+#         one_time_keyboard=False  # клавиатура остаётся
+#     )
 def get_main_keyboard():
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="Нокис-Шымбай")],
-            [KeyboardButton(text="Шымбай-Нукус")]
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Нокис-Шымбай", callback_data="nukis_shymbay"),
+                InlineKeyboardButton(text="Шымбай-Нукус", callback_data="shymbay_nukis")
+            ]
         ],
-        resize_keyboard=True,  # подгоняет размер
-        one_time_keyboard=False  # клавиатура остаётся
     )
 
 # 🌀 Команда /start
@@ -111,9 +122,32 @@ async def cmd_start(message: Message):
     )
 
 # 🚖 Обработка выбора маршрута
-@dp.message(F.text == "Нокис-Шымбай")
-async def handle_nukus_shymbay(message: Message):
-    user_id = message.from_user.id
+# @dp.message(F.text == "Нокис-Шымбай")
+# async def handle_nukus_shymbay(message: Message):
+#     user_id = message.from_user.id
+
+#     # Увеличиваем счетчик взаимодействий пользователя
+#     if user_id not in user_stats:
+#         user_stats[user_id] = 1
+#     else:
+#         user_stats[user_id] += 1
+
+#     await message.answer(TEXT_NOKIS_SHYMBAY)
+
+# @dp.message(F.text == "Шымбай-Нукус")
+# async def handle_shymbay_nukus(message: Message):
+#     user_id = message.from_user.id
+
+#     # Увеличиваем счетчик взаимодействий пользователя
+#     if user_id not in user_stats:
+#         user_stats[user_id] = 1
+#     else:
+#         user_stats[user_id] += 1
+
+#     await message.answer(TEXT_SHYMBAY_NOKIS)
+@dp.callback_query(F.data == "nukis_shymbay")
+async def handle_nukus_shymbay(callback: CallbackQuery):
+    user_id = callback.from_user.id
 
     # Увеличиваем счетчик взаимодействий пользователя
     if user_id not in user_stats:
@@ -121,11 +155,11 @@ async def handle_nukus_shymbay(message: Message):
     else:
         user_stats[user_id] += 1
 
-    await message.answer(TEXT_NOKIS_SHYMBAY)
+    await callback.answer(TEXT_NOKIS_SHYMBAY)
 
-@dp.message(F.text == "Шымбай-Нукус")
-async def handle_shymbay_nukus(message: Message):
-    user_id = message.from_user.id
+@dp.callback_query(F.data == "shymbay_nukis")
+async def handle_shymbay_nukus(callback: CallbackQuery):
+    user_id = callback.from_user.id
 
     # Увеличиваем счетчик взаимодействий пользователя
     if user_id not in user_stats:
@@ -133,7 +167,8 @@ async def handle_shymbay_nukus(message: Message):
     else:
         user_stats[user_id] += 1
 
-    await message.answer(TEXT_SHYMBAY_NOKIS)
+    await callback.answer(TEXT_SHYMBAY_NOKIS)
+
 
 # 📊 Команда /stats для вывода статистики
 @dp.message(F.text == "/stats")
@@ -142,9 +177,9 @@ async def show_stats(message: Message):
     total_interactions = sum(user_stats.values())  # Общее количество взаимодействий
 
     await message.answer(
-        f"📊 <b>Статистика использования бота:</b>\n"
-        f"• Всего пользователей: <b>{total_users}</b>\n"
-        f"• Всего взаимодействий: <b>{total_interactions}</b>",
+        f"📊 <b>Боттын статистикасы:</b>\n"
+        f"• Колдарнушылар саны: <b>{total_users}</b>\n"
+        f"• Катнаслар саны: <b>{total_interactions}</b>",
         parse_mode=ParseMode.HTML
     )
 
