@@ -145,7 +145,7 @@ async def cmd_start(message: Message):
 #         user_stats[user_id] += 1
 
 #     await message.answer(TEXT_SHYMBAY_NOKIS)
-@dp.callback_query(F.data == "nukus_shymbay")
+@dp.callback_query(F.data == "nukis_shymbay")
 async def handle_nukus_shymbay(callback: CallbackQuery):
     user_id = callback.from_user.id
 
