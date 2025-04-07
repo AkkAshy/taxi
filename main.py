@@ -6,6 +6,7 @@ from aiogram.filters import CommandStart
 from aiogram.client.default import DefaultBotProperties
 
 import asyncio
+from aiohttp import web 
 
 # 🔐 Впиши сюда свой секретный токен
 TOKEN = "7613268698:AAGLKzPJMPmv9sZQvTv-Stf9CmXRh2ZdUmg"
@@ -15,6 +16,18 @@ default_properties = DefaultBotProperties(parse_mode=ParseMode.HTML)  # Наст
 bot = Bot(token=TOKEN, default=default_properties)  # Передаем default_properties
 dp = Dispatcher(storage=MemoryStorage())
 
+# Простой HTTP-сервер для Render.com
+async def on_startup(app):
+    asyncio.create_task(dp.start_polling(bot))
+
+app = web.Application()
+app.on_startup.append(on_startup)
+
+# Маршрут для проверки работоспособности
+async def healthcheck(request):
+    return web.Response(text="OK")
+
+app.router.add_get("/", healthcheck)
 
 START_TEXT = """
 ➤ ТАКСИ-БОТ | НӨКИС - ШЫМБАЙ
@@ -119,9 +132,6 @@ async def show_stats(message: Message):
         parse_mode=ParseMode.HTML
     )
 
-# 🧪 Запуск магии
-async def main():
-    await dp.start_polling(bot)
-
+# Запуск HTTP-сервера
 if __name__ == "__main__":
-    asyncio.run(main())
+    web.run_app(app, port=int(os.getenv("PORT", 8080)))
